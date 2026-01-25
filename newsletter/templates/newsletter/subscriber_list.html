@@ -1,0 +1,23 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% load my_tags %}
+{% block content %}
+
+<div class="container mt-5">
+
+    <h1 class="mb-4">Список получателей рассылки</h1>
+    <a href="{% url 'newsletter:subscriber_form' %}" class="btn btn-primary mb-3">Создать нового получателя</a>
+    <ul class="list-group">
+        {% for subscriber in subscribers %}
+<!--            <img src="{{ article.image_article | media_filter }}"-->
+<!--                    alt="{{ article.title_article }}"-->
+<!--                    class="card-img-top"-->
+<!--                    style="height: 350px; width: 70%; object-fit: cover; display: block; margin: 30 auto;">-->
+            <li class="list-group-item mb-5">
+                <a href="{% url 'newsletter:subscriber_detail' subscriber.pk %}">{{ subscriber.email }}</a>
+                <a href="{% url 'newsletter:subscriber_update' subscriber.pk %}" class="btn btn-sm btn-secondary ml-3">Редактировать</a>
+                <a href="{% url 'newsletter:subscriber_confirm_delete' subscriber.pk %}" class="btn btn-sm btn-danger ml-1">Удалить</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

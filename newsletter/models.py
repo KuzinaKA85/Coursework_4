@@ -9,7 +9,7 @@ class Subscriber(models.Model):
     comment = models.TextField(verbose_name="Комментарий")
 
     def __str__(self):
-        return f'{self.first_name} {self.surname} {self.last_name}'
+        return f"{self.first_name} {self.surname} {self.last_name}"
 
     class Meta:
         verbose_name = "Получатель"

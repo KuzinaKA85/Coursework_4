@@ -8,7 +8,10 @@ from newsletter.models import Subscriber
 class SubscriberListView(ListView):
     model = Subscriber
     template_name = "newsletter/subscriber_list.html"
-    context_object_name = "subscriber"
+    context_object_name = "subscribers"
+
+    def get_queryset(self):
+        return Subscriber.objects.all()
 
 
 class SubscriberCreateView(CreateView):

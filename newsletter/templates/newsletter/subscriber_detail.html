@@ -1,0 +1,20 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% load my_tags %}
+{% block content %}
+
+<div class="container mt-5">
+<!--    <img src="{{ object.image_article | media_filter }}"-->
+<!--                    alt="{{ object.title_article }}"-->
+<!--                    class="card-img-top"-->
+<!--                    style="height: 350px; width: 100%; object-fit: cover;">-->
+        <h1 class="mb-4">{{ subscriber.email }}</h1>
+        <p>{{ subscriber.first_name }}</p>
+        <p>{{ subscriber.surname }}</p>
+        <p>{{ subscriber.last_name }}</p>
+<!--        <p>Создано: {{ article.created_at }}</p>-->
+<!--        <p>Обновлено: {{ article.updated_at }}</p>-->
+        <a href="{% url 'newsletter:subscriber_update' subscriber.pk %}" class="btn btn-secondary">Редактировать</a>
+        <a href="{% url 'newsletter:subscriber_confirm_delete' subscriber.pk %}" class="btn btn-danger">Удалить</a>
+        <a href="{% url 'newsletter:subscriber_list' %}" class="btn btn-primary">Вернуться к списку пользователей</a>
+</div>
+{% endblock %}

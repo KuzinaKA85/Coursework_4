@@ -9,13 +9,13 @@ https://docs.djangoproject.com/en/6.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
+
 # SECRET_KEY = "django-insecure-k_%-7z)3%)jm%re6f6b&4!xrftnap1iq_(i8%o!_@jyj4h(y&h"
 import os
 
 from django.conf.global_settings import DEFAULT_AUTO_FIELD, MEDIA_URL
 from dotenv import load_dotenv
 from pathlib import Path
-
 
 load_dotenv(override=True)
 

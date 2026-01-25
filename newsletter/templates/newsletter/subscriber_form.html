@@ -1,0 +1,14 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% load my_tags %}
+{% block content %}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Форма создания получателя рассылки</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'newsletter:subscriber_list' %}" class="btn btn-secondary">Отменить</a>
+    </form>
+</div>
+{% endblock %}
