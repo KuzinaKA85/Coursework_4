@@ -1,0 +1,35 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Рассылка #{{ mailing.id }}</h2>
+
+    <div class="alert alert-info">
+        <p><strong>Отладка:</strong></p>
+        <p>ID рассылки: {{ mailing.id }}</p>
+        <p>Есть ли сообщение: {% if mailing.message %}Да{% else %}Нет{% endif %}</p>
+        <p>Количество получателей: {{ mailing.clients.count }}</p>
+    </div>
+
+    <p><strong>Начало:</strong> {{ mailing.start_time }}</p>
+    <p><strong>Окончание:</strong> {{ mailing.end_time }}</p>
+    <p><strong>Статус:</strong> {{ mailing.get_status_display }}</p>
+    <p><strong>Сообщение:</strong> {{ mailing.message.subject_letter }}</p>
+    <p><strong>Текст:</strong> {{ mailing.message.body_letter }}</p>
+
+    <h4>Получатели:</h4>
+    {% if mailing.clients.all %}
+        <ul>
+            {% for client in mailing.clients.all %}
+                <li>{{ client.first_name }} {{ client.surname }} {{ client.last_name }} ({{ client.email }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-warning">Нет получателей для этой рассылки</p>
+    {% endif %}
+
+    <a href="{% url 'newsletter:mailing_list' %}" class="btn btn-secondary">Назад</a>
+    <a href="{% url 'newsletter:mailing_update' mailing.pk %}" class="btn btn-primary">Редактировать</a>
+</div>
+
+{% endblock %}
