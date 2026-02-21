@@ -7,6 +7,11 @@ from newsletter.views import (
     SubscriberDetailView,
     SubscriberUpdateView,
     SubscriberDeleteView,
+    MessageListView,
+    MessageCreateView,
+    MessageDetailView,
+    MessageUpdateView,
+    MessageDeleteView,
 )
 
 app_name = NewsletterConfig.name
@@ -26,5 +31,16 @@ urlpatterns = [
         "subscriber/delete/<int:pk>/",
         SubscriberDeleteView.as_view(),
         name="subscriber_confirm_delete",
+    ),
+    path("messages/", MessageListView.as_view(), name="message_list"),
+    path("message/new/", MessageCreateView.as_view(), name="message_form"),
+    path("message/<int:pk>/", MessageDetailView.as_view(), name="message_detail"),
+    path(
+        "message/update/<int:pk>/", MessageUpdateView.as_view(), name="message_update"
+    ),
+    path(
+        "message/delete/<int:pk>/",
+        MessageDeleteView.as_view(),
+        name="message_confirm_delete",
     ),
 ]

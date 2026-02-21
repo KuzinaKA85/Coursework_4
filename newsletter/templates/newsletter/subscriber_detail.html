@@ -8,9 +8,9 @@
 <!--                    class="card-img-top"-->
 <!--                    style="height: 350px; width: 100%; object-fit: cover;">-->
         <h1 class="mb-4">{{ subscriber.email }}</h1>
-        <p>{{ subscriber.first_name }}</p>
-        <p>{{ subscriber.surname }}</p>
-        <p>{{ subscriber.last_name }}</p>
+        <p>Имя: {{ subscriber.first_name }}</p>
+        <p>Отчетсво: {{ subscriber.surname }}</p>
+        <p>Фамилия: {{ subscriber.last_name }}</p>
 <!--        <p>Создано: {{ article.created_at }}</p>-->
 <!--        <p>Обновлено: {{ article.updated_at }}</p>-->
         <a href="{% url 'newsletter:subscriber_update' subscriber.pk %}" class="btn btn-secondary">Редактировать</a>
