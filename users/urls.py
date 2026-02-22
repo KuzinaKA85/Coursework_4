@@ -7,11 +7,9 @@ from users.views import UserRegisterView
 app_name = UsersConfig.name
 
 urlpatterns = [
-    path("login/", LoginView.as_view(template_name="login.html"), name="login"),
-    path(
-        "logout/",
-        LogoutView.as_view(template_name="logged_out.html"),
-        name="logout",
-    ),
+
+    path("login/", LoginView.as_view(template_name="users/login.html"), name="login"),
+
+    path("logout/", LogoutView.as_view(template_name="users/logged_out.html"), name="logout"),
     path("register/", UserRegisterView.as_view(), name="user_form"),
 ]

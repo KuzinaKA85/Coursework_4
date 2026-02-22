@@ -5,6 +5,17 @@
         <a class="p-2 btn btn-outline-primary" href="{% url 'newsletter:message_list' %}">Список сообщений</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'newsletter:mailing_list' %}">Список рассылок</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'newsletter:mailing_attempt_list' %}">Список попыток</a>
+        {% if user.is_authenticated %}
+        <form action="{% url 'users:logout' %}" method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="p-2 btn btn-outline-primary">
+                Выйти
+            </button>
+        </form>
+        {% else %}
+        <a class="p-2 btn btn-outline-primary" href="{% url 'users:login' %}">Вход</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'users:user_form' %}">Регистрация</a>
+        {% endif %}
 
 
     </nav>

@@ -25,6 +25,8 @@ DEBUG = True if os.getenv("DEBUG") == "True" else False
 
 ALLOWED_HOSTS = ["*"]
 
+AUTH_USER_MODEL = "users.User"
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -32,8 +34,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "newsletter",
     "users",
+    "newsletter",
+
 ]
 
 MIDDLEWARE = [
@@ -116,19 +119,19 @@ MEDIA_URL = "/media/"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-AUTH_USER_MODEL = "users.User"
 
-LOGIN_REDIRECT_URL = "/"
 
-LOGIN_URL = "/"
+LOGIN_REDIRECT_URL = "/newsletter/mailings/"
+
+LOGIN_URL = "/users/login/"
 
 # LOGOUT_REDIRECT_URL = "/"
 
-CACHE_ENABLED = True
-if CACHE_ENABLED:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": "redis://127.0.0.1:6379/1",
-        }
-    }
+# CACHE_ENABLED = True
+# if CACHE_ENABLED:
+#     CACHES = {
+#         "default": {
+#             "BACKEND": "django.core.cache.backends.redis.RedisCache",
+#             "LOCATION": "redis://127.0.0.1:6379/1",
+#         }
+#     }
