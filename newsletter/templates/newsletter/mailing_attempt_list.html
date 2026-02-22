@@ -1,0 +1,35 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Попытки рассылок</h2>
+<!--    <a href="{% url 'newsletter:mailing_form' %}" class="btn btn-primary mb-3">Новая рассылка</a>-->
+    
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Дата и время попытки</th>
+            <th>Конец</th>
+            <th>Статус</th>
+<!--            <th>Действия</th>-->
+        </tr>
+        {% for mailing in object_list %}
+        <tr>
+            <td>{{ mailingattept.id }}</td>
+            <td>{{ mailingattept.attempt_time }}</td>
+            <td>{{ mailingattept.status }}</td>
+            <td>{{ mailingattept.server_response }}</td>
+<!--            <td>-->
+<!--                <a href="{% url 'newsletter:mailing_detail' mailing.pk %}">Посмотреть</a>-->
+<!--                <a href="{% url 'newsletter:mailing_update' mailing.pk %}">Изменить</a>-->
+<!--                <a href="{% url 'newsletter:mailing_confirm_delete' mailing.pk %}">Удалить</a>-->
+<!--            </td>-->
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">Нет рассылок</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

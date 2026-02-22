@@ -8,7 +8,7 @@
         <p><strong>Отладка:</strong></p>
         <p>ID рассылки: {{ mailing.id }}</p>
         <p>Есть ли сообщение: {% if mailing.message %}Да{% else %}Нет{% endif %}</p>
-        <p>Количество получателей: {{ mailing.clients.count }}</p>
+        <p>Количество получателей: {{ mailing.recipients.count }}</p>
     </div>
 
     <p><strong>Начало:</strong> {{ mailing.start_time }}</p>
@@ -18,10 +18,10 @@
     <p><strong>Текст:</strong> {{ mailing.message.body_letter }}</p>
 
     <h4>Получатели:</h4>
-    {% if mailing.clients.all %}
+    {% if mailing.recipients.all %}
         <ul>
-            {% for client in mailing.clients.all %}
-                <li>{{ client.first_name }} {{ client.surname }} {{ client.last_name }} ({{ client.email }})</li>
+            {% for recipient in mailing.recipients.all %}
+                <li>{{ recipient.first_name }} {{ recipient.surname }} {{ recipient.last_name }} ({{ recipient.email }})</li>
             {% endfor %}
         </ul>
     {% else %}

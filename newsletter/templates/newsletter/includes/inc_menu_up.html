@@ -2,8 +2,10 @@
     <h5 class="my-0 mr-md-auto font-weight-normal">"Сервис рассылки"</h5>
     <nav class="ms-5">
         <a class="p-2 btn btn-outline-primary" href="{% url 'newsletter:subscriber_list' %}">Список получателей</a>
-        <a class="p-2 btn btn-outline-primary" href="{% url 'newsletter:mailing_list' %}">Список рассылок</a>
         <a class="p-2 btn btn-outline-primary" href="{% url 'newsletter:message_list' %}">Список сообщений</a>
-        <a class="p-2 btn btn-outline-primary" href="/contacts/">Контакты</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'newsletter:mailing_list' %}">Список рассылок</a>
+        <a class="p-2 btn btn-outline-primary" href="{% url 'newsletter:mailing_attempt_list' %}">Список попыток</a>
+
+
     </nav>
 </div>

@@ -1,3 +1,6 @@
+from django.utils import timezone
+
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from config import settings
@@ -38,11 +41,7 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
-    # owner = models.ForeignKey(  # ДОБАВЛЕНО ПОЛЕ
-    #     settings.AUTH_USER_MODEL,
-    #     on_delete=models.CASCADE,
-    #     verbose_name='Владелец'
-    # )
+
     STATUS_CHOICES = [
         ("created", "Создана"),
         ("started", "Запущена"),
@@ -57,7 +56,7 @@ class Mailing(models.Model):
     message = models.ForeignKey(
         "Message", on_delete=models.CASCADE, verbose_name="Сообщение"
     )
-    clients = models.ManyToManyField(
+    recipients = models.ManyToManyField(
         "Subscriber", verbose_name="Получатели", blank=True
     )
 
@@ -67,3 +66,63 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
+
+    def update_status(self):
+        """Динамическое вычисление и сохранение статуса."""
+        now = timezone.now()
+        new_status = self.status
+
+        if now < self.start_time:
+            new_status = "created"
+        elif self.start_time <= now <= self.end_time:
+            new_status = "started"
+        elif now > self.end_time:
+            new_status = "completed"
+
+        if self.status != new_status:
+            self.status = new_status
+            self.save(update_fields=["status"])
+
+    def clean(self):
+        """Валидация полей"""
+        if not self.pk and self.start_time < timezone.now():
+            raise ValidationError({'start_time': "Время начала не может быть в прошлом."})
+
+        if self.start_time >= self.end_time:
+            raise ValidationError("Время начала должно быть строго меньше времени окончания.")
+
+    def __str__(self):
+        return f"Рассылка № {self.id} (старт: {self.start_time})"
+
+
+class MailingAttempt(models.Model):
+    STATUS_SUCCESS = "Успешно"
+    STATUS_FAILURE = "Не успешно"
+
+    STATUS_CHOICES = [
+        (STATUS_SUCCESS, "Успешно"),
+        (STATUS_FAILURE, "Не успешно"),
+    ]
+
+    mailing = models.ForeignKey(
+        "Mailing",
+        on_delete=models.CASCADE,
+        related_name="attempts",
+        verbose_name="Рассылка"
+    )
+    attempt_time = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время попытки")
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        verbose_name="Статус"
+    )
+    server_response = models.TextField(blank=True, null=True, verbose_name="Ответ сервера")
+
+    class Meta:
+        verbose_name = "Попытка рассылки"
+        verbose_name_plural = "Попытки рассылок"
+        ordering = ("-attempt_time",)  # Сначала новые
+
+    def __str__(self):
+        return f"Попытка {self.id} для {self.mailing} ({self.get_status_display()})"

@@ -15,7 +15,7 @@ from newsletter.views import (
     MailingListView,
     MailingCreateView,
     MailingUpdateView,
-    MailingDeleteView,
+    MailingDeleteView, MailingAttemptListView, MainView,
 )
 
 app_name = NewsletterConfig.name
@@ -58,4 +58,12 @@ urlpatterns = [
         MailingDeleteView.as_view(),
         name="mailing_confirm_delete",
     ),
+    path(
+        "mailingattempts/",
+        MailingAttemptListView.as_view(),
+        name="mailing_attempt_list",
+    ),
+    path(
+        "main/",
+        MainView.as_view(), name="main"),
 ]

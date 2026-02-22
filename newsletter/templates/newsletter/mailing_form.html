@@ -7,7 +7,8 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Создать</button>
+<!--        <button type="submit" class="btn btn-success">Создать</button>-->
+        <a href="{% url 'newsletter:mailing_list' %}" class="btn btn-secondary">Создать</a>
         <a href="{% url 'newsletter:mailing_list' %}" class="btn btn-secondary">Отмена</a>
     </form>
 </div>
