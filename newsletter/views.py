@@ -1,10 +1,14 @@
+from multiprocessing.managers import dispatch
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.views import View
+from django.views.decorators.cache import cache_page
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
@@ -56,6 +60,7 @@ class SubscriberCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(cache_page(60 * 5), name='dispatch')
 class SubscriberDetailView(LoginRequiredMixin, DetailView):
     model = Subscriber
     template_name = "newsletter/subscriber_detail.html"
@@ -118,6 +123,7 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(cache_page(60 * 5), name='dispatch')
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     template_name = "newsletter/message_detail.html"
@@ -188,6 +194,7 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(cache_page(60 * 5), name='dispatch')
 class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
     template_name = "newsletter/mailing_detail.html"
