@@ -1,8 +1,6 @@
 import secrets
 
 from django.contrib import messages
-from django.contrib.auth import login
-from django.contrib.auth.views import LoginView
 
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render, get_object_or_404

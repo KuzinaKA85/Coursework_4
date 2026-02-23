@@ -3,8 +3,9 @@
 
 <div class="container mt-5">
     <h2>Рассылки</h2>
+
     <a href="{% url 'newsletter:mailing_form' %}" class="btn btn-primary mb-3">Новая рассылка</a>
-    
+
     <table class="table">
         <tr>
             <th>ID</th>
@@ -18,11 +19,29 @@
             <td>{{ mailing.id }}</td>
             <td>{{ mailing.start_time }}</td>
             <td>{{ mailing.end_time }}</td>
-            <td>{{ mailing.get_status_display }}</td>
             <td>
+                {{ mailing.get_status_display }}
+                {% if not mailing.is_active %}
+                    <span class="badge bg-secondary">Отключена</span>
+                {% endif %}
+            </td>
+            <td>
+                <!-- Просмотр для всех -->
                 <a href="{% url 'newsletter:mailing_detail' mailing.pk %}">Посмотреть</a>
-                <a href="{% url 'newsletter:mailing_update' mailing.pk %}">Изменить</a>
-                <a href="{% url 'newsletter:mailing_confirm_delete' mailing.pk %}">Удалить</a>
+
+                <!-- Изменение/удаление только для владельца -->
+                {% if mailing.owner == user %}
+                    <a href="{% url 'newsletter:mailing_update' mailing.pk %}">Изменить</a>
+                    <a href="{% url 'newsletter:mailing_confirm_delete' mailing.pk %}">Удалить</a>
+                {% endif %}
+
+                <!-- Отключение только для менеджеров -->
+                {% if perms.newsletter.can_disable_mailing and mailing.is_active %}
+                    <form method="post" action="{% url 'newsletter:mailing_disable' mailing.pk %}" style="display: inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-danger">Отключить</button>
+                    </form>
+                {% endif %}
             </td>
         </tr>
         {% empty %}

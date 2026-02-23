@@ -3,7 +3,7 @@ from django.urls import path
 
 from users import views
 from users.apps import UsersConfig
-from users.views import UserRegisterView, confirm_email, reset_password
+from users.views import UserRegisterView, confirm_email
 
 app_name = UsersConfig.name
 

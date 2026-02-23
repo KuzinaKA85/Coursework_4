@@ -1,5 +1,6 @@
 from django.urls import path
 
+from newsletter import views
 from newsletter.apps import NewsletterConfig
 from newsletter.views import (
     SubscriberListView,
@@ -66,4 +67,9 @@ urlpatterns = [
         name="mailing_attempt_list",
     ),
     path("main/", MainView.as_view(), name="main"),
+    path(
+        "mailing/<int:pk>/disable/",
+        views.MailingDisableView.as_view(),
+        name="mailing_disable",
+    ),
 ]

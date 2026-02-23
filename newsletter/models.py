@@ -18,7 +18,7 @@ class Subscriber(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Владелец",
         null=True,  # для старых записей
-        blank=True
+        blank=True,
     )
 
     def __str__(self):
@@ -45,7 +45,7 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Владелец",
         null=True,
-        blank=True
+        blank=True,
     )
 
     def __str__(self):
@@ -88,14 +88,17 @@ class Mailing(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Владелец",
         null=True,
-        blank=True
+        blank=True,
     )
 
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
         permissions = [
-            ("can_view_all_mailings", "Может просматривать все рассылки"),  # для менеджеров
+            (
+                "can_view_all_mailings",
+                "Может просматривать все рассылки",
+            ),  # для менеджеров
             ("can_disable_mailing", "Может отключать рассылки"),  # для менеджеров
         ]
 
