@@ -31,6 +31,10 @@ class User(AbstractUser):
     is_staff = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=True)
 
+    token = models.CharField(
+        max_length=100, verbose_name="Токен подтверждения", blank=True, null=True
+    )
+
     objects = UserManager()
 
     USERNAME_FIELD = "email"

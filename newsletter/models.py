@@ -86,10 +86,14 @@ class Mailing(models.Model):
     def clean(self):
         """Валидация полей"""
         if not self.pk and self.start_time < timezone.now():
-            raise ValidationError({'start_time': "Время начала не может быть в прошлом."})
+            raise ValidationError(
+                {"start_time": "Время начала не может быть в прошлом."}
+            )
 
         if self.start_time >= self.end_time:
-            raise ValidationError("Время начала должно быть строго меньше времени окончания.")
+            raise ValidationError(
+                "Время начала должно быть строго меньше времени окончания."
+            )
 
     def __str__(self):
         return f"Рассылка № {self.id} (старт: {self.start_time})"
@@ -108,16 +112,18 @@ class MailingAttempt(models.Model):
         "Mailing",
         on_delete=models.CASCADE,
         related_name="attempts",
-        verbose_name="Рассылка"
+        verbose_name="Рассылка",
     )
-    attempt_time = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время попытки")
+    attempt_time = models.DateTimeField(
+        auto_now_add=True, verbose_name="Дата и время попытки"
+    )
 
     status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        verbose_name="Статус"
+        max_length=20, choices=STATUS_CHOICES, verbose_name="Статус"
     )
-    server_response = models.TextField(blank=True, null=True, verbose_name="Ответ сервера")
+    server_response = models.TextField(
+        blank=True, null=True, verbose_name="Ответ сервера"
+    )
 
     class Meta:
         verbose_name = "Попытка рассылки"

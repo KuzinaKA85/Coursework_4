@@ -4,6 +4,7 @@ from django.conf import settings
 
 from newsletter.models import MailingAttempt
 
+
 class MailingAttemptService:
 
     @staticmethod
@@ -27,13 +28,13 @@ class MailingAttemptService:
                 )
                 MailingAttempt.objects.create(
                     mailing=mailing,
-                    status='Успешно',
-                    server_response='Email sent successfully',
+                    status="Успешно",
+                    server_response="Email sent successfully",
                 )
             except Exception as e:
                 MailingAttempt.objects.create(
                     mailing=mailing,
-                    status='Не успешно',
+                    status="Не успешно",
                     server_response=str(e),
                 )
 

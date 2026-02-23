@@ -112,10 +112,10 @@ class MailingDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['attempts'] = self.object.attempts.all().order_by('-attempt_time')
+        context["attempts"] = self.object.attempts.all().order_by("-attempt_time")
         return context
 
-    def get_object(self, queryset = None):
+    def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         obj.update_status()
         return obj
@@ -140,7 +140,7 @@ class MailingDeleteView(DeleteView):
 class MailingStartView(View):
 
     def get(self, request, *args, **kwargs):
-        mailing = get_object_or_404(Mailing, pk=kwargs.get('pk'))
+        mailing = get_object_or_404(Mailing, pk=kwargs.get("pk"))
 
         success, message = MailingAttemptService.send_mailing(mailing)
 
@@ -149,7 +149,7 @@ class MailingStartView(View):
         else:
             messages.error(request, message)
 
-        return redirect('web_app:mailing_detail', pk=mailing.pk)
+        return redirect("web_app:mailing_detail", pk=mailing.pk)
 
 
 class MailingAttemptListView(ListView):
@@ -172,9 +172,7 @@ class MainView(TemplateView):
         # 2. Количество активных рассылок
         # Условие: start_time <= now <= end_time И статус 'started'
         context["active_mailings"] = Mailing.objects.filter(
-            start_time__lte=now,
-            end_time__gte=now,
-            status="started"
+            start_time__lte=now, end_time__gte=now, status="started"
         ).count()
 
         # 3. Количество уникальных получателей
