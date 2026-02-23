@@ -60,7 +60,7 @@ class SubscriberCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-@method_decorator(cache_page(60 * 5), name='dispatch')
+@method_decorator(cache_page(60 * 5), name="dispatch")
 class SubscriberDetailView(LoginRequiredMixin, DetailView):
     model = Subscriber
     template_name = "newsletter/subscriber_detail.html"
@@ -123,7 +123,7 @@ class MessageCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-@method_decorator(cache_page(60 * 5), name='dispatch')
+@method_decorator(cache_page(60 * 5), name="dispatch")
 class MessageDetailView(LoginRequiredMixin, DetailView):
     model = Message
     template_name = "newsletter/message_detail.html"
@@ -189,12 +189,19 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
     template_name = "newsletter/mailing_form.html"
     success_url = reverse_lazy("newsletter:mailing_list")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Передаем в шаблон списки сообщений и получателей текущего пользователя
+        context["messages"] = Message.objects.filter(owner=self.request.user)
+        context["subscribers"] = Subscriber.objects.filter(owner=self.request.user)
+        return context
+
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
 
-@method_decorator(cache_page(60 * 5), name='dispatch')
+@method_decorator(cache_page(60 * 5), name="dispatch")
 class MailingDetailView(LoginRequiredMixin, DetailView):
     model = Mailing
     template_name = "newsletter/mailing_detail.html"
@@ -253,16 +260,16 @@ class MailingDisableView(LoginRequiredMixin, PermissionRequiredMixin, View):
 
 
 class MailingStartView(LoginRequiredMixin, View):
-    permission_required = "newsletter.can_start_mailing"  # для менеджеров
-
     def get(self, request, *args, **kwargs):
-        # Только менеджеры и админы могут запускать рассылки
-        if not (
-            request.user.is_superuser
-            or request.user.groups.filter(name="Менеджер").exists()
-        ):
-            raise PermissionDenied("Только менеджеры могут запускать рассылки")
         mailing = get_object_or_404(Mailing, pk=kwargs.get("pk"))
+
+        # Проверка: владелец ИЛИ менеджер ИЛИ админ
+        is_owner = mailing.owner == request.user
+        is_manager = request.user.groups.filter(name="Менеджер").exists()
+        is_admin = request.user.is_superuser
+
+        if not (is_owner or is_manager or is_admin):
+            raise PermissionDenied("У вас нет прав для запуска этой рассылки")
 
         success, message = MailingAttemptService.send_mailing(mailing)
 
@@ -271,7 +278,7 @@ class MailingStartView(LoginRequiredMixin, View):
         else:
             messages.error(request, message)
 
-        return redirect("web_app:mailing_detail", pk=mailing.pk)
+        return redirect("newsletter:mailing_detail", pk=mailing.pk)
 
 
 class MailingAttemptListView(ListView):
@@ -288,16 +295,13 @@ class MainView(TemplateView):
         context = super().get_context_data(**kwargs)
         now = timezone.now()
 
-        # 1. Общее количество всех созданных рассылок
         context["total_mailings"] = Mailing.objects.count()
 
-        # 2. Количество активных рассылок
         # Условие: start_time <= now <= end_time И статус 'started'
         context["active_mailings"] = Mailing.objects.filter(
             start_time__lte=now, end_time__gte=now, status="started"
         ).count()
 
-        # 3. Количество уникальных получателей
         context["unique_recipients"] = Subscriber.objects.distinct().count()
 
         return context

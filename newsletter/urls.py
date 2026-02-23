@@ -19,6 +19,7 @@ from newsletter.views import (
     MailingDeleteView,
     MailingAttemptListView,
     MainView,
+    MailingStartView,
 )
 
 app_name = NewsletterConfig.name
@@ -72,4 +73,5 @@ urlpatterns = [
         views.MailingDisableView.as_view(),
         name="mailing_disable",
     ),
+    path("mailing/<int:pk>/start/", MailingStartView.as_view(), name="mailing_start"),
 ]
