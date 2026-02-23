@@ -13,6 +13,14 @@ class Subscriber(models.Model):
     last_name = models.CharField(max_length=150, verbose_name="Фамилия")
     comment = models.TextField(verbose_name="Комментарий")
 
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,  # для старых записей
+        blank=True
+    )
+
     def __str__(self):
         return f"{self.first_name} {self.surname} {self.last_name}"
 
@@ -20,6 +28,9 @@ class Subscriber(models.Model):
         verbose_name = "Получатель"
         verbose_name_plural = "Получатели"
         ordering = ["email", "first_name", "surname", "last_name"]
+        permissions = [
+            ("can_view_all_subscribers", "Может просматривать всех получателей"),
+        ]
 
 
 class Message(models.Model):
@@ -29,6 +40,14 @@ class Message(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
 
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True
+    )
+
     def __str__(self):
         return self.subject_letter
 
@@ -37,6 +56,9 @@ class Message(models.Model):
         verbose_name_plural = "Сообщения"
         ordering = [
             "subject_letter",
+        ]
+        permissions = [
+            ("can_view_all_messages", "Может просматривать все сообщения"),
         ]
 
 
@@ -59,13 +81,23 @@ class Mailing(models.Model):
     recipients = models.ManyToManyField(
         "Subscriber", verbose_name="Получатели", blank=True
     )
+    is_active = models.BooleanField(default=True)  # для отключения рассылок менеджером
 
-    def __str__(self):
-        return f"Рассылка № {self.id} (старт: {self.start_time})"
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name="Владелец",
+        null=True,
+        blank=True
+    )
 
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
+        permissions = [
+            ("can_view_all_mailings", "Может просматривать все рассылки"),  # для менеджеров
+            ("can_disable_mailing", "Может отключать рассылки"),  # для менеджеров
+        ]
 
     def update_status(self):
         """Динамическое вычисление и сохранение статуса."""
