@@ -1,0 +1,69 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>{% if object %}Редактировать{% else %}Создать{% endif %} рассылку</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Время начала -->
+        <div class="mb-3">
+            <label>Время начала</label>
+            <input type="datetime-local" name="start_time" class="form-control" required>
+        </div>
+
+        <!-- Время окончания -->
+        <div class="mb-3">
+            <label>Время окончания</label>
+            <input type="datetime-local" name="end_time" class="form-control" required>
+        </div>
+
+        <!-- Статус -->
+        <div class="mb-3">
+            <label>Статус</label>
+            <select name="status" class="form-control">
+                <option value="created">Создана</option>
+                <option value="started">Запущена</option>
+                <option value="completed">Завершена</option>
+            </select>
+        </div>
+
+        <!-- Сообщение -->
+        <div class="mb-3">
+            <label>Сообщение</label>
+            <select name="message" class="form-control" required>
+                <option value="">-- Выберите сообщение --</option>
+                {% for message in messages %}
+                    <option value="{{ message.id }}">{{ message.subject_letter }}</option>
+                {% empty %}
+                    <option value="" disabled>Сначала создайте сообщение</option>
+                {% endfor %}
+            </select>
+            {% if not messages %}
+                <a href="{% url 'newsletter:message_form' %}" class="btn btn-sm btn-primary mt-2">Создать сообщение</a>
+            {% endif %}
+        </div>
+
+        <!-- Получатели -->
+        <div class="mb-3">
+            <label>Получатели</label>
+            <select name="recipients" class="form-control" multiple size="5">
+                {% for subscriber in subscribers %}
+                    <option value="{{ subscriber.id }}">{{ subscriber.email }} - {{ subscriber.last_name }}</option>
+                {% empty %}
+                    <option value="" disabled>Сначала создайте получателей</option>
+                {% endfor %}
+            </select>
+            <small class="text-muted">Удерживайте Ctrl для выбора нескольких</small>
+            {% if not subscribers %}
+                <a href="{% url 'newsletter:subscriber_form' %}" class="btn btn-sm btn-primary mt-2">Создать получателя</a>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{% url 'newsletter:mailing_list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+
+{% endblock %}

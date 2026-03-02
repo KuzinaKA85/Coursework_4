@@ -1,0 +1,14 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% load my_tags %}
+{% block content %}
+
+<div class="container mt-5">
+        <h1 class="mb-4">{{ message.subject_letter}}</h1>
+        <p>{{ message.body_letter }}</p>
+        <p>Создано: {{ message.created_at }}</p>
+        <p>Обновлено: {{ message.updated_at }}</p>
+        <a href="{% url 'newsletter:message_update' message.pk %}" class="btn btn-secondary">Редактировать</a>
+        <a href="{% url 'newsletter:message_confirm_delete' message.pk %}" class="btn btn-danger">Удалить</a>
+        <a href="{% url 'newsletter:message_list' %}" class="btn btn-primary">Вернуться к списку сообщений</a>
+</div>
+{% endblock %}

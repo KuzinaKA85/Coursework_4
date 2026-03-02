@@ -1,0 +1,90 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Рассылка #{{ mailing.id }}</h2>
+
+    <div class="alert alert-info">
+        <p><strong>Отладка:</strong></p>
+        <p>ID рассылки: {{ mailing.id }}</p>
+        <p>Есть ли сообщение: {% if mailing.message %}Да{% else %}Нет{% endif %}</p>
+        <p>Количество получателей: {{ mailing.recipients.count }}</p>
+        <p>Владелец: {{ mailing.owner.email|default:"Нет владельца" }}</p>
+    </div>
+
+    <p><strong>Начало:</strong> {{ mailing.start_time }}</p>
+    <p><strong>Окончание:</strong> {{ mailing.end_time }}</p>
+    <p><strong>Статус:</strong> {{ mailing.get_status_display }}</p>
+    <p><strong>Сообщение:</strong> {{ mailing.message.subject_letter }}</p>
+    <p><strong>Текст:</strong> {{ mailing.message.body_letter }}</p>
+
+    <h4>Получатели:</h4>
+    {% if mailing.recipients.all %}
+        <ul>
+            {% for recipient in mailing.recipients.all %}
+                <li>{{ recipient.first_name }} {{ recipient.surname }} {{ recipient.last_name }} ({{ recipient.email }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-warning">Нет получателей для этой рассылки</p>
+    {% endif %}
+
+    <!-- КНОПКА ЗАПУСКА -->
+    {% if mailing.status == 'created' %}
+        <!-- Показываем кнопку, если пользователь - владелец ИЛИ менеджер ИЛИ админ -->
+        {% if mailing.owner == user or user.groups.filter.name == 'Менеджеры' or user.is_superuser %}
+            <a href="{% url 'newsletter:mailing_start' mailing.pk %}"
+               class="btn btn-success"
+               onclick="return confirm('Запустить рассылку сейчас? Письма будут отправлены всем получателям.')">
+                Запустить рассылку
+            </a>
+        {% endif %}
+    {% endif %}
+
+    <!-- КНОПКИ РЕДАКТИРОВАНИЯ/УДАЛЕНИЯ - ТОЛЬКО ДЛЯ ВЛАДЕЛЬЦА -->
+    {% if mailing.owner == user %}
+        <a href="{% url 'newsletter:mailing_update' mailing.pk %}" class="btn btn-primary">Редактировать</a>
+        <a href="{% url 'newsletter:mailing_confirm_delete' mailing.pk %}" class="btn btn-danger">Удалить</a>
+    {% endif %}
+
+    <!-- ДЛЯ МЕНЕДЖЕРОВ: кнопка "Назад" и возможно отключение -->
+    <a href="{% url 'newsletter:mailing_list' %}" class="btn btn-secondary">Назад</a>
+
+    <!-- Если менеджер может отключать рассылки -->
+    {% if perms.newsletter.can_disable_mailing and mailing.is_active and user.groups.filter.name == 'Менеджеры' %}
+        <form method="post" action="{% url 'newsletter:mailing_disable' mailing.pk %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning"
+                    onclick="return confirm('Отключить рассылку?')">
+                Отключить рассылку
+            </button>
+        </form>
+    {% endif %}
+</div>
+
+<!-- Попытки отправки (видят все, у кого есть доступ к рассылке) -->
+{% if mailing.attempts.exists %}
+<div class="container mt-4">
+    <h3>Попытки отправки</h3>
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Время</th>
+                <th>Статус</th>
+                <th>Ответ сервера</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for attempt in mailing.attempts.all|dictsortreversed:"attempt_time" %}
+            <tr class="{% if attempt.status == 'Успешно' %}table-success{% else %}table-danger{% endif %}">
+                <td>{{ attempt.attempt_time }}</td>
+                <td>{{ attempt.status }}</td>
+                <td>{{ attempt.server_response|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+{% endblock %}

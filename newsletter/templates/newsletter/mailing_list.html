@@ -1,0 +1,61 @@
+{% extends 'newsletter/newsletter_base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Рассылки</h2>
+
+    <!-- Кнопка создания - для всех авторизованных -->
+    <a href="{% url 'newsletter:mailing_form' %}" class="btn btn-primary mb-3">Новая рассылка</a>
+
+    <!-- Информация для менеджеров -->
+    {% if user.groups.filter.name == 'Менеджеры' %}
+        <div class="alert alert-info mb-3">
+            <i class="fas fa-eye"></i> Вы вошли как менеджер. Вы видите все рассылки (только просмотр).
+        </div>
+    {% endif %}
+
+    <table class="table">
+        <tr>
+            <th>ID</th>
+            <th>Начало</th>
+            <th>Конец</th>
+            <th>Статус</th>
+            <th>Владелец</th>
+            <th>Действия</th>
+        </tr>
+        {% for mailing in object_list %}
+        <tr>
+            <td>{{ mailing.id }}</td>
+            <td>{{ mailing.start_time }}</td>
+            <td>{{ mailing.end_time }}</td>
+            <td>
+                {{ mailing.get_status_display }}
+                {% if not mailing.is_active %}
+                    <span class="badge bg-secondary">Отключена</span>
+                {% endif %}
+            </td>
+            <td>{{ mailing.owner.email|default:"-" }}</td>
+            <td>
+                <!-- Просмотр - для всех, кто видит запись -->
+                <a href="{% url 'newsletter:mailing_detail' mailing.pk %}">Посмотреть</a>
+
+                <!-- Изменение/удаление - только для владельца -->
+                {% if mailing.owner == user %}
+                    <a href="{% url 'newsletter:mailing_update' mailing.pk %}">Изменить</a>
+                    <a href="{% url 'newsletter:mailing_confirm_delete' mailing.pk %}">Удалить</a>
+                {% endif %}
+
+                <!-- Для менеджеров - только просмотр -->
+                {% if user.groups.filter.name == 'Менеджеры' and mailing.owner != user %}
+                    <span class="text-muted">(только просмотр)</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6">Нет рассылок</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
